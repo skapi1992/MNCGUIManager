@@ -22,13 +22,15 @@ public class Controller implements Runnable{
     private Model model;
     private View view;
     private final BlockingQueue<ViewEvent> blockingQueue;
-    private final BlockingQueue<MNCControlEvent> receivedData;
+    //private final BlockingQueue<MNCControlEvent> receivedData;
+    private final BlockingQueue<String> receivedData;
     private boolean working = true;
 
     public Controller(Socket clientSocket) {
         this.clientSocket = clientSocket;
         this.blockingQueue = new ArrayBlockingQueue<ViewEvent>(10);
-        this.receivedData = new LinkedBlockingQueue<MNCControlEvent>();
+        //this.receivedData = new LinkedBlockingQueue<MNCControlEvent>();
+        this.receivedData = new LinkedBlockingQueue<String>();
         this.model = new Model();
         new Thread(new DataReceiver()).start();
     }
@@ -97,8 +99,13 @@ public class Controller implements Runnable{
             {
                 try
                 {
+                    /*
                     MNCControlEvent mncControlEvent = receivedData.take();
                     reactOnDriverEvent(mncControlEvent);
+
+                    */
+                    String str = receivedData.take();
+                    view.insertLog(str);
                 }
                 catch (InterruptedException e)
                 {
@@ -120,12 +127,16 @@ public class Controller implements Runnable{
             while(getWorking()) {
                 try {
                     ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
+                    /*
                     MNCControlEvent mncControlEvent = (MNCControlEvent) in.readObject();
                     if(mncControlEvent == null) {
                         setWorking(false);
                         break;
                     }
                     receivedData.put(mncControlEvent);
+                    */
+                    String str = (String) in.readObject();
+                    receivedData.put(str);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (ClassNotFoundException e) {
