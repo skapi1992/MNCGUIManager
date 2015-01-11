@@ -1,6 +1,6 @@
 package pl.edu.pw.elka.tin.mncgui.controller;
 
-import pl.edu.pw.elka.tin.mncgui.events.MNCControlEvent;
+import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCControlEvent;
 import pl.edu.pw.elka.tin.mncgui.model.Model;
 import pl.edu.pw.elka.tin.mncgui.view.View;
 import pl.edu.pw.elka.tin.mncgui.events.ViewEvent;
