@@ -89,7 +89,7 @@ public class Controller implements Runnable{
         }else if(event.getCommand() == "shutdown/power_on") {
             //TODO
         }else if(event.getCommand() == "show_token") {
-            //TODO
+            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.ReceiveFromMulticast, "test"));
         }else{
             //TODO sytuacja gdy chemy wywolac jakies zadanie na grupie
         }
