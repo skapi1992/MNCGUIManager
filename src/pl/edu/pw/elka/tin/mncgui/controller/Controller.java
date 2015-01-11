@@ -7,6 +7,7 @@ import pl.edu.pw.elka.tin.mncgui.events.ViewEvent;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -24,6 +25,8 @@ public class Controller implements Runnable{
     private final BlockingQueue<ViewEvent> blockingQueue;
     private final BlockingQueue<MNCControlEvent> receivedData;
     private boolean working = true;
+    ObjectOutputStream out = null;
+    ObjectInputStream in = null;
 
     public Controller(Socket clientSocket) {
         this.clientSocket = clientSocket;
@@ -31,6 +34,12 @@ public class Controller implements Runnable{
         this.receivedData = new LinkedBlockingQueue<MNCControlEvent>();
         this.model = new Model();
         new Thread(new DataReceiver()).start();
+        try {
+            this.out = new ObjectOutputStream(clientSocket.getOutputStream());
+            this.in = new ObjectInputStream(clientSocket.getInputStream());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void run() {
@@ -86,6 +95,14 @@ public class Controller implements Runnable{
         }
     }
 
+    public void sendCommand(MNCControlEvent event){
+        try {
+            out.writeObject(event);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Class reacting on commands from drivers
      */
@@ -117,12 +134,6 @@ public class Controller implements Runnable{
 
         @Override
         public void run(){
-            ObjectInputStream in = null;
-            try {
-                in = new ObjectInputStream(clientSocket.getInputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             while(getWorking()) {
                 try {
                     MNCControlEvent mncControlEvent = (MNCControlEvent) in.readObject();
