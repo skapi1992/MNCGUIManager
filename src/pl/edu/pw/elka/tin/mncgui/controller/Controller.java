@@ -36,7 +36,6 @@ public class Controller implements Runnable{
         new Thread(new DataReceiver()).start();
         try {
             this.out = new ObjectOutputStream(clientSocket.getOutputStream());
-            this.in = new ObjectInputStream(clientSocket.getInputStream());
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -134,6 +133,11 @@ public class Controller implements Runnable{
 
         @Override
         public void run(){
+            try {
+                in = new ObjectInputStream(clientSocket.getInputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             while(getWorking()) {
                 try {
                     MNCControlEvent mncControlEvent = (MNCControlEvent) in.readObject();
