@@ -7,15 +7,22 @@ import java.io.Serializable;
  */
 public class MNCControlEvent implements Serializable{
     public static enum TYPE{
-        ReceiveFromMulticast
+        ReceiveFromMulticast, Command, Start
     }
 
     public final TYPE type;
     public final Object data;
+    public String group = null;
 
     public MNCControlEvent(TYPE t, Object d){
         type = t;
         data = d;
+    }
+
+    public MNCControlEvent(TYPE t, Object d, String group){
+        type = t;
+        data = d;
+        this.group = group;
     }
 
     public TYPE getType() {
@@ -24,5 +31,9 @@ public class MNCControlEvent implements Serializable{
 
     public Object getData() {
         return data;
+    }
+
+    public String getGroup() {
+        return group;
     }
 }

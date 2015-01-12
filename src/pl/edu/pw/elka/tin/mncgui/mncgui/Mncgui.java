@@ -16,7 +16,7 @@ public class Mncgui {
         try {
             br.readLine();
         } catch (IOException ioe) {
-            System.out.println("IO error trying to read your name!");
+            System.out.println("IO error trying to read");
             System.exit(1);
         }
     }
@@ -26,6 +26,6 @@ public class Mncgui {
         new Thread(server).start();
         System.out.println("Press enter to stop the server");
         waitForInput();
-        server.stop();
+        System.exit(0);
     }
 }

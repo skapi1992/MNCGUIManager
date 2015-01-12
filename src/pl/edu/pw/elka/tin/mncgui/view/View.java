@@ -108,8 +108,8 @@ public class View {
             commandPanel.setMinimumSize(new Dimension(rightPanel.getMinimumSize().width, 160));
             commandPanel.setMaximumSize(new Dimension(rightPanel.getMaximumSize().width, 160));
             {// wciecie dla poprawy czytelnosci - elementy wewnetrze commandPanel
-                String[] monitorCommands = {"Komenda1", "Komenda2"};
-                String[] driverCommands = {"Bird", "Cat", "Dog", "Rabbit", "Pig"};
+                String[] monitorCommands = {"add group (name)", "remove group"};
+                String[] driverCommands = {"add group (name)", "remove group", "send data", "force token transfer"};
                 if(isMonitor) {
                     commandList = new JComboBox(monitorCommands);
                 }else {
@@ -130,11 +130,29 @@ public class View {
                 sendBtn.setFont(new Font("Arial", Font.BOLD, 12));
                 sendBtn.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        ViewEvent event = new ViewEvent(commandList.getSelectedItem().toString(), groupList.getSelectedItem().toString());
-                        try {
-                            blockingQueue.put(event);
-                        } catch (InterruptedException ex) {
-                            ex.printStackTrace();
+                        if(!commandList.getSelectedItem().toString().equals("")) {
+                            ViewEvent event;
+                            String str = commandList.getSelectedItem().toString();
+                            int indexOf = str.indexOf(" (");
+                            if(indexOf > 0){
+                                if (str.substring(0, str.indexOf(" (")).equals("add group")) {
+                                    event = new ViewEvent("add group", str.substring(str.indexOf("(")+1, str.indexOf(")")));
+                                    try {
+                                        blockingQueue.put(event);
+                                    } catch (InterruptedException ex) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+                            } else {
+                                if(!groupList.getSelectedItem().toString().equals("")) {
+                                    event = new ViewEvent(str, groupList.getSelectedItem().toString());
+                                    try {
+                                        blockingQueue.put(event);
+                                    } catch (InterruptedException ex) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+                            }
                         }
                     }
                 });

@@ -42,10 +42,10 @@ public class Controller implements Runnable{
     }
 
     public void run() {
-        //TODO odczytac info na temat czy polaczyl sie monitor czy sterownik i wywolac view wypelnionym poprawnie tytulem oraz parametrem czy to monitor czy kontroler
-        String[] tokenNames= {"token1", "token2"};
-        String[] groupNames= {"group1", "group2", "group3"};
-        this.view = new View("example", blockingQueue, true, groupNames, tokenNames);
+        //TODO odczytac info na temat czy polaczyl sie monitor czy sterownik, wywolac view wypelnionym poprawnie tytulem, a takze zczytac tokeny i grupy
+        String[] tokenNames= {""};
+        String[] groupNames= {""};
+        this.view = new View("example", blockingQueue, false, groupNames, tokenNames);
         new Thread(new WatchingDriverEvents()).start();
         startWatchingViewEvents();
     }
@@ -80,26 +80,28 @@ public class Controller implements Runnable{
         if(event.getCommand() == "exit") {
             view.dispose();
             setWorking(false);
-            try {
-                clientSocket.close();
-            } catch (Exception e){
-                e.printStackTrace();
-            }
         }else if(event.getCommand() == "shutdown/power_on") {
-            //TODO
+            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand()));
         }else if(event.getCommand() == "show_token") {
-            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.ReceiveFromMulticast, "test"));
-        }else{
-            //TODO sytuacja gdy chemy wywolac jakies zadanie na grupie
+            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand()));
+        }else if(event.getCommand() == "add group") {
+            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), event.getGroup()));
+        }else if(event.getCommand() == "remove group") {
+            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), event.getGroup()));
+        }else if(event.getCommand() == "send data") {
+            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), event.getGroup()));
+        }else if(event.getCommand() == "force token transfer") {
+            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), event.getGroup()));
         }
     }
 
     public void sendCommand(MNCControlEvent event){
-        try {
-            out.writeObject(event);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        if(getWorking())
+            try {
+                out.writeObject(event);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
     }
 
     /**
@@ -124,7 +126,7 @@ public class Controller implements Runnable{
         }
 
         public void reactOnDriverEvent(MNCControlEvent mncControlEvent){
-            //TODO
+            //TODO obsluga dodaj/usun token/grupe
             view.insertLog((String)mncControlEvent.getData());
         }
     }
@@ -145,7 +147,8 @@ public class Controller implements Runnable{
                         setWorking(false);
                         break;
                     }
-                    receivedData.put(mncControlEvent);
+                    if(getWorking())
+                        receivedData.put(mncControlEvent);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (ClassNotFoundException e) {
@@ -153,6 +156,11 @@ public class Controller implements Runnable{
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+            }
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
