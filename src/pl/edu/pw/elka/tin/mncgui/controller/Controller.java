@@ -1,7 +1,6 @@
 package pl.edu.pw.elka.tin.mncgui.controller;
 
 import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCControlEvent;
-import pl.edu.pw.elka.tin.mncgui.model.Model;
 import pl.edu.pw.elka.tin.mncgui.view.View;
 import pl.edu.pw.elka.tin.mncgui.events.ViewEvent;
 
@@ -20,7 +19,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Controller implements Runnable{
 
     private Socket clientSocket = null;
-    private Model model;
     private View view;
     private final BlockingQueue<ViewEvent> blockingQueue;
     private final BlockingQueue<MNCControlEvent> receivedData;
@@ -32,7 +30,6 @@ public class Controller implements Runnable{
         this.clientSocket = clientSocket;
         this.blockingQueue = new ArrayBlockingQueue<ViewEvent>(10);
         this.receivedData = new LinkedBlockingQueue<MNCControlEvent>();
-        this.model = new Model();
         new Thread(new DataReceiver()).start();
         try {
             this.out = new ObjectOutputStream(clientSocket.getOutputStream());
