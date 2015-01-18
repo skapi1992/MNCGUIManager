@@ -42,11 +42,8 @@ public class Controller implements Runnable{
     }
 
     public void run() {
-        //TODO odczytac info na temat czy polaczyl sie monitor czy sterownik, wywolac view wypelnionym poprawnie tytulem, a takze zczytac tokeny i grupy
-        String[] tokenNames= {""};
-        String[] groupNames= {""};
-        this.view = new View("example", blockingQueue, false, groupNames, tokenNames);
         new Thread(new WatchingDriverEvents()).start();
+        this.view = new View(blockingQueue);
         startWatchingViewEvents();
     }
 
@@ -77,21 +74,27 @@ public class Controller implements Runnable{
     }
 
     public void reactOnViewEvent(ViewEvent event) {
+        String[] groupName = new String[1];
         if(event.getCommand() == "exit") {
             view.dispose();
             setWorking(false);
         }else if(event.getCommand() == "shutdown/power_on") {
             sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand()));
         }else if(event.getCommand() == "show_token") {
-            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand()));
+            groupName[0] = event.getToken();
+            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), groupName));
         }else if(event.getCommand() == "add group") {
-            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), event.getGroup()));
+            groupName[0] = event.getGroup();
+            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), groupName));
         }else if(event.getCommand() == "remove group") {
-            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), event.getGroup()));
+            groupName[0] = event.getGroup();
+            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), groupName));
         }else if(event.getCommand() == "send data") {
-            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), event.getGroup()));
+            groupName[0] = event.getGroup();
+            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), groupName));
         }else if(event.getCommand() == "force token transfer") {
-            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), event.getGroup()));
+            groupName[0] = event.getGroup();
+            sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), groupName));
         }
     }
 
@@ -126,8 +129,12 @@ public class Controller implements Runnable{
         }
 
         public void reactOnDriverEvent(MNCControlEvent mncControlEvent){
+            //view.insertLog((String)mncControlEvent.getData());
+            if(mncControlEvent.getType() == MNCControlEvent.TYPE.Start) {
+                view.setVisible(mncControlEvent.getName(), (Boolean)mncControlEvent.getData());
+                view.addGroups(mncControlEvent.getGroup());
+            }
             //TODO obsluga dodaj/usun token/grupe
-            view.insertLog((String)mncControlEvent.getData());
         }
     }
 

@@ -27,8 +27,11 @@ public class View {
     private JComboBox commandList;
     private JComboBox groupList;
     private JComboBox tokenList;
+    private JPanel rightPanel;
+    private JPanel leftPanel;
+    private JPanel tokenPanel;
 
-    public View(String title, final BlockingQueue<ViewEvent> blockingQueue, boolean isMonitor, String[] groupNames, String[] tokenNames) {
+    public View(final BlockingQueue<ViewEvent> blockingQueue) {
         text_panel = new JTextPane();
         text_panel.setEditable(false);
         text_panel.setContentType("text/html");
@@ -40,19 +43,19 @@ public class View {
         doc = (HTMLDocument)text_panel.getStyledDocument();
         scrollPane = new JScrollPane(text_panel);
 
-        frame = new JFrame(title);
+        frame = new JFrame("example");
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS));
         frame.setPreferredSize(new Dimension(600, 398));
         frame.setMinimumSize(new Dimension(600, 398));
         Border eBorder = BorderFactory.createEtchedBorder();
 
-        JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBorder(BorderFactory.createTitledBorder(eBorder, "Log"));
         leftPanel.setPreferredSize(new Dimension(400, 398));
         leftPanel.add(scrollPane);
 
-        JPanel rightPanel = new JPanel();
+        rightPanel = new JPanel();
         rightPanel.setPreferredSize(new Dimension(200, 438));
         rightPanel.setMaximumSize(new Dimension(200, frame.getMaximumSize().height));
         rightPanel.setMinimumSize(new Dimension(200, frame.getMinimumSize().height));
@@ -108,19 +111,13 @@ public class View {
             commandPanel.setMinimumSize(new Dimension(rightPanel.getMinimumSize().width, 160));
             commandPanel.setMaximumSize(new Dimension(rightPanel.getMaximumSize().width, 160));
             {// wciecie dla poprawy czytelnosci - elementy wewnetrze commandPanel
-                String[] monitorCommands = {"add group (name)", "remove group"};
-                String[] driverCommands = {"add group (name)", "remove group", "send data", "force token transfer"};
-                if(isMonitor) {
-                    commandList = new JComboBox(monitorCommands);
-                }else {
-                    commandList = new JComboBox(driverCommands);
-                }
+                commandList = new JComboBox();
                 commandList.setPreferredSize(new Dimension(rightPanel.getMaximumSize().width - 20, 30));
                 commandList.setEditable(true);
 
                 JLabel groupLbl = new JLabel("Select group");
 
-                groupList = new JComboBox(groupNames);
+                groupList = new JComboBox();
                 groupList.setPreferredSize(new Dimension(rightPanel.getMaximumSize().width - 20, 30));
 
                 JButton sendBtn = new JButton();
@@ -163,13 +160,13 @@ public class View {
                 commandPanel.add(sendBtn);
             }
 
-            JPanel tokenPanel = new JPanel();
+            tokenPanel = new JPanel();
             tokenPanel.setBorder(BorderFactory.createTitledBorder(eBorder, "Tokens"));
             tokenPanel.setPreferredSize(new Dimension(rightPanel.getMaximumSize().width, 100));
             tokenPanel.setMinimumSize(new Dimension(rightPanel.getMinimumSize().width, 100));
             tokenPanel.setMaximumSize(new Dimension(rightPanel.getMaximumSize().width, 100));
             {// wciecie dla poprawy czytelnosci - elementy wewnetrze tokenPanel
-                tokenList = new JComboBox(tokenNames);
+                tokenList = new JComboBox();
                 tokenList.setPreferredSize(new Dimension(rightPanel.getMaximumSize().width - 20, 30));
 
                 JButton showBtn = new JButton();
@@ -195,13 +192,26 @@ public class View {
 
             rightPanel.add(powerPanel);
             rightPanel.add(commandPanel);
-            if(!isMonitor)
-                rightPanel.add(tokenPanel);
+        }
+    }
+
+    public void setVisible(String title, boolean isMonitor) {
+        frame.setTitle(title);
+        String[] monitorCommands = {"add group (name)", "remove group"};
+        String[] driverCommands = {"add group (name)", "remove group", "send data", "force token transfer"};
+        if(isMonitor) {
+            for (int i = 0; i < monitorCommands.length; i++) {
+                commandList.addItem(monitorCommands[i]);
+            }
+        }else {
+            for (int i = 0; i < monitorCommands.length; i++) {
+                commandList.addItem(monitorCommands[i]);
+            }
+            rightPanel.add(tokenPanel);
         }
         frame.add(leftPanel);
         frame.add(rightPanel);
         frame.pack();
-
         frame.setVisible(true);
     }
 
