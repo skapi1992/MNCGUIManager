@@ -235,7 +235,7 @@ public class View {
         tokenList.removeAllItems();
     }
 
-    public void showDialod(String msg, String title) {
+    public void showDialog(String msg, String title) {
         JOptionPane.showMessageDialog(null, msg, title, JOptionPane.INFORMATION_MESSAGE);
     }
 

@@ -12,6 +12,23 @@ import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+/*
+Koncepcja na kolorowanie skladni itp.
+otrzymane komendy:
+
+    krytyczne (jeden kolor)
+        - power on
+        - shutdown
+    logi
+        - wchodzace polaczenia (jakis kolor)
+        - wychodzace polaczenia (jakis kolor)
+
+    wazne/decyzyjne (jakis kolor)
+        - wzialem token
+        - oddalem token
+        - dodalem grupe
+        - odszedlem z grupy
+*/
 
 /**
  * MVC Controller Class
@@ -129,10 +146,17 @@ public class Controller implements Runnable{
         }
 
         public void reactOnDriverEvent(MNCControlEvent mncControlEvent){
-            view.insertLog((String)mncControlEvent.getData());
             if(mncControlEvent.getType() == MNCControlEvent.TYPE.Start) {
                 view.setVisible(mncControlEvent.getName(), (Boolean)mncControlEvent.getData());
                 view.addGroups(mncControlEvent.getGroup());
+            }else if(mncControlEvent.getType() == MNCControlEvent.TYPE.MyGroups) {
+                view.removeGroups();
+                view.addGroups(mncControlEvent.getGroup());
+            }else if(mncControlEvent.getType() == MNCControlEvent.TYPE.MyTokens) {
+                view.removeTokens();
+                view.addTokens(mncControlEvent.getGroup());
+            }else if(mncControlEvent.getType() == MNCControlEvent.TYPE.TokenInfo) {
+                view.showDialog((String)mncControlEvent.getData(),"Token: "+mncControlEvent.getGroup()[0]);
             }
             //TODO obsluga dodaj/usun token/grupe
         }

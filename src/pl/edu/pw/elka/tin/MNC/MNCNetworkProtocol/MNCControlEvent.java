@@ -7,7 +7,16 @@ import java.io.Serializable;
  */
 public class MNCControlEvent implements Serializable{
     public static enum TYPE{
-        ReceiveFromMulticast, Command, Start
+        //Logi
+        ReceiveFromMulticast,
+
+        //Komendy od gui managera
+        Command,
+        //Dane specjalne dla GuiManagera
+        Start,
+        MyGroups,
+        MyTokens,
+        TokenInfo
     }
 
     public final TYPE type;
@@ -44,5 +53,16 @@ public class MNCControlEvent implements Serializable{
 
     public String[] getGroup() {
         return group;
+    }
+
+    public String toString(){
+        String text = "";
+        if(type == TYPE.Command){
+            text = "Command from Gui "+(String)data+" to group:";
+            if(group != null)
+                for(String g : group)
+                    text+=g+" ";
+        }
+        return text;
     }
 }
