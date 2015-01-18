@@ -204,8 +204,8 @@ public class View {
                 commandList.addItem(monitorCommands[i]);
             }
         }else {
-            for (int i = 0; i < monitorCommands.length; i++) {
-                commandList.addItem(monitorCommands[i]);
+            for (int i = 0; i < driverCommands.length; i++) {
+                commandList.addItem(driverCommands[i]);
             }
             rightPanel.add(tokenPanel);
         }

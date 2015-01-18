@@ -42,8 +42,8 @@ public class Controller implements Runnable{
     }
 
     public void run() {
-        new Thread(new WatchingDriverEvents()).start();
         this.view = new View(blockingQueue);
+        new Thread(new WatchingDriverEvents()).start();
         startWatchingViewEvents();
     }
 
@@ -78,21 +78,21 @@ public class Controller implements Runnable{
         if(event.getCommand() == "exit") {
             view.dispose();
             setWorking(false);
-        }else if(event.getCommand() == "shutdown/power_on") {
+        }else if(event.getCommand().equals("shutdown/power_on")) {
             sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand()));
-        }else if(event.getCommand() == "show_token") {
+        }else if(event.getCommand().equals("show_token")) {
             groupName[0] = event.getToken();
             sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), groupName));
-        }else if(event.getCommand() == "add group") {
+        }else if(event.getCommand().equals("add group")) {
             groupName[0] = event.getGroup();
             sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), groupName));
-        }else if(event.getCommand() == "remove group") {
+        }else if(event.getCommand().equals("remove group")) {
             groupName[0] = event.getGroup();
             sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), groupName));
-        }else if(event.getCommand() == "send data") {
+        }else if(event.getCommand().equals("send data")) {
             groupName[0] = event.getGroup();
             sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), groupName));
-        }else if(event.getCommand() == "force token transfer") {
+        }else if(event.getCommand().equals("force token transfer")) {
             groupName[0] = event.getGroup();
             sendCommand(new MNCControlEvent(MNCControlEvent.TYPE.Command, event.getCommand(), groupName));
         }
@@ -129,7 +129,7 @@ public class Controller implements Runnable{
         }
 
         public void reactOnDriverEvent(MNCControlEvent mncControlEvent){
-            //view.insertLog((String)mncControlEvent.getData());
+            view.insertLog((String)mncControlEvent.getData());
             if(mncControlEvent.getType() == MNCControlEvent.TYPE.Start) {
                 view.setVisible(mncControlEvent.getName(), (Boolean)mncControlEvent.getData());
                 view.addGroups(mncControlEvent.getGroup());
