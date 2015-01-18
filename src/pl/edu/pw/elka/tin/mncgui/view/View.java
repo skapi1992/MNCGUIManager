@@ -44,7 +44,7 @@ public class View {
                 ".inMulLog{padding: 2px 0 0 0; margin: 0 0 1px 0; height: 16px; background-color: #8fff8c; color: #000000;}" +
                 ".outMulLog{padding: 2px 0 0 0; margin: 0 0 1px 0; height: 16px; background-color: #8ce8ff; color: #000000;}" +
                 ".event{padding: 2px 0 0 0; margin: 0 0 1px 0; height: 16px; background-color: #ff9292; color: #000000;}</style></head>" +
-                "<body><div class=\"log\">text1</div><div class=\"log\">text2</div></body></html>");
+                "<body>");
         doc = (HTMLDocument)text_panel.getStyledDocument();
         scrollPane = new JScrollPane(text_panel);
 

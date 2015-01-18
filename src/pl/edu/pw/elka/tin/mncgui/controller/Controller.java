@@ -12,23 +12,6 @@ import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-/*
-Koncepcja na kolorowanie skladni itp.
-otrzymane komendy:
-
-    krytyczne (jeden kolor)
-        - power on
-        - shutdown
-    logi
-        - wchodzace polaczenia (jakis kolor)
-        - wychodzace polaczenia (jakis kolor)
-
-    wazne/decyzyjne (jakis kolor)
-        - wzialem token
-        - oddalem token
-        - dodalem grupe
-        - odszedlem z grupy
-*/
 
 /**
  * MVC Controller Class
