@@ -8,10 +8,27 @@ import java.io.Serializable;
 public class MNCControlEvent implements Serializable{
     public static enum TYPE{
         //Logi
+        HaveNewTokenOwner,
+        SendByMulticast,
         ReceiveFromMulticast,
-
+        ReceiveFromUnicast,
+        DataConsumption,
+        SendByUnicast,
+        AddedNewDeviceToGroup,
+        DataAlreadyConsumed,
+        DataReBroadcast,
+        ReceivedToken,
+        SentDataBroadcastConfirm,
+        TokenOutOfReach,
+        TokenOwnerAssignment,
+        TokenTransfered,
+        TokenTransferError,
+        RemoveDeviceFromTokenList,
         //Komendy od gui managera
         Command,
+        //Logig specjalne
+        ControllerStarted,
+        ControllerStoped,
         //Dane specjalne dla GuiManagera
         Start,
         MyGroups,

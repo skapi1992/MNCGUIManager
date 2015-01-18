@@ -156,9 +156,10 @@ public class Controller implements Runnable{
                 view.removeTokens();
                 view.addTokens(mncControlEvent.getGroup());
             }else if(mncControlEvent.getType() == MNCControlEvent.TYPE.TokenInfo) {
-                view.showDialog((String)mncControlEvent.getData(),"Token: "+mncControlEvent.getGroup()[0]);
+                view.showDialog((String) mncControlEvent.getData(), "Token: " + mncControlEvent.getGroup()[0]);
+            }else {
+                view.insertLog((String)mncControlEvent.getData(), mncControlEvent.getType());
             }
-            //TODO obsluga dodaj/usun token/grupe
         }
     }
 

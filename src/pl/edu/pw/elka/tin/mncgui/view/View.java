@@ -1,5 +1,6 @@
 package pl.edu.pw.elka.tin.mncgui.view;
 
+import pl.edu.pw.elka.tin.MNC.MNCNetworkProtocol.MNCControlEvent;
 import pl.edu.pw.elka.tin.mncgui.events.ViewEvent;
 
 import javax.swing.*;
@@ -37,8 +38,12 @@ public class View {
         text_panel.setContentType("text/html");
         text_panel.setText("<html>" +
                 "<head><style>body{margin:0; padding: 0; font-family: \"Courier New\", Courier, monospace; font-size: 11px;}" +
-                ".log{padding: 2px 0 0 0; margin: 0 0 1px 0; height: 16px; background-color: #0099FF;}" +
-                ".log-send{padding: 2px 0 0 0; margin: 0 0 1px 0; height: 16px; background-color: #00FF66;}</style></head>" +
+                ".critical{padding: 2px 0 0 0; margin: 0 0 1px 0; height: 16px; background-color: #000000; color: #FFFFFF;}" +
+                ".inUniLog{padding: 2px 0 0 0; margin: 0 0 1px 0; height: 16px; background-color: #1aff14; color: #000000;}" +
+                ".outUniLog{padding: 2px 0 0 0; margin: 0 0 1px 0; height: 16px; background-color: #03cdff; color: #000000;}" +
+                ".inMulLog{padding: 2px 0 0 0; margin: 0 0 1px 0; height: 16px; background-color: #8fff8c; color: #000000;}" +
+                ".outMulLog{padding: 2px 0 0 0; margin: 0 0 1px 0; height: 16px; background-color: #8ce8ff; color: #000000;}" +
+                ".event{padding: 2px 0 0 0; margin: 0 0 1px 0; height: 16px; background-color: #ff9292; color: #000000;}</style></head>" +
                 "<body><div class=\"log\">text1</div><div class=\"log\">text2</div></body></html>");
         doc = (HTMLDocument)text_panel.getStyledDocument();
         scrollPane = new JScrollPane(text_panel);
@@ -239,10 +244,26 @@ public class View {
         JOptionPane.showMessageDialog(null, msg, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public void insertLog(String log) {
-        Element e = doc.getElement(doc.getDefaultRootElement(), StyleConstants.NameAttribute, HTML.Tag.BODY);
+    public void insertLog(String log, MNCControlEvent.TYPE type) {
+        String cssClass;
+        if(type == MNCControlEvent.TYPE.ReceiveFromMulticast){
+            cssClass = "inMulLog";
+        }else if(type == MNCControlEvent.TYPE.SendByMulticast) {
+            cssClass = "outMulLog";
+        }else if(type == MNCControlEvent.TYPE.ReceiveFromUnicast){
+            cssClass = "inUniLog";
+        }else if(type == MNCControlEvent.TYPE.SendByUnicast){
+            cssClass = "outUniLog";
+        }else if(type == MNCControlEvent.TYPE.ControllerStarted){
+            cssClass = "critical";
+        }else if(type == MNCControlEvent.TYPE.ControllerStoped){
+            cssClass = "critical";
+        }else{
+            cssClass = "event";
+        }
+            Element e = doc.getElement(doc.getDefaultRootElement(), StyleConstants.NameAttribute, HTML.Tag.BODY);
         try {
-            doc.insertBeforeEnd(e, log);
+            doc.insertBeforeEnd(e, "<div class="+cssClass+">"+log+"</div>");
         } catch (BadLocationException e1) {
             e1.printStackTrace();
         } catch (IOException e1) {
